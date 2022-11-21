@@ -1,0 +1,37 @@
+# Azure Bastion Service is not required for Vault operation, but it
+# provides an secure and easy to use way access to the Vault VMs
+
+resource "azurerm_public_ip" "abs" {
+  count = var.abs_address_prefix == null ? 0 : 1
+
+  allocation_method   = "Static"
+  location            = var.resource_group.location
+  name                = "${var.resource_name_prefix}-vault-abs"
+  resource_group_name = var.resource_group.name
+  sku                 = "Standard"
+  tags                = var.common_tags
+}
+
+resource "azurerm_subnet" "vault_abs" {
+  count = var.abs_address_prefix == null ? 0 : 1
+
+  address_prefixes     = [var.abs_address_prefix] # at least /27 or larger
+  name                 = "AzureBastionSubnet"
+  resource_group_name  = var.resource_group.name
+  virtual_network_name = azurerm_virtual_network.vault.name
+}
+
+resource "azurerm_bastion_host" "main" {
+  count = var.abs_address_prefix == null ? 0 : 1
+
+  location            = var.resource_group.location
+  name                = "${var.resource_name_prefix}-vault-abs"
+  resource_group_name = var.resource_group.name
+  tags                = var.common_tags
+
+  ip_configuration {
+    name                 = "${var.resource_name_prefix}-vault-abs"
+    public_ip_address_id = azurerm_public_ip.abs[0].id
+    subnet_id            = azurerm_subnet.vault_abs[0].id
+  }
+}
