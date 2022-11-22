@@ -66,6 +66,7 @@ curl --insecure https://vault.dev.verituityplatform.com
 | 172.16.15.192/26 | 172.16.15.193 | 172.16.15.254	| 172.16.15.255 |
 
 ## TODO
+* Migrate from gitlab to azure for terraform state
 * Enable "dead server cleanup"
 * Use remote state to fetch DNS details like dns parent group rg name, etc
 * Use avail zones for agw/lb
