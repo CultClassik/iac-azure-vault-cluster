@@ -12,6 +12,33 @@ resource "azurerm_subnet" "vault" {
   ]
 }
 
+resource "azurerm_application_security_group" "vault" {
+  location            = var.resource_group.location
+  name                = "${var.resource_name_prefix}-vault"
+  resource_group_name = var.resource_group.name
+  tags                = var.common_tags
+}
+
+resource "azurerm_network_security_group" "vault" {
+  location            = var.resource_group.location
+  name                = "${var.resource_name_prefix}-vault"
+  resource_group_name = var.resource_group.name
+  tags                = var.common_tags
+}
+
+resource "azurerm_network_security_rule" "vault_internet_access" {
+  access                      = "Allow"
+  destination_address_prefix  = "*"
+  destination_port_range      = "*"
+  direction                   = "Outbound"
+  name                        = "${var.resource_name_prefix}-vault-access-to-internet"
+  network_security_group_name = azurerm_network_security_group.vault.name
+  priority                    = 100
+  protocol                    = "Tcp"
+  resource_group_name         = var.resource_group.name
+  source_address_prefix       = "*"
+  source_port_range           = "*"
+}
 
 resource "azurerm_network_security_rule" "vault_internal_api" {
   access                      = "Allow"
@@ -103,31 +130,3 @@ resource "azurerm_subnet_network_security_group_association" "vault" {
     azurerm_network_security_rule.vault_other_inbound,
   ]
 }
-
-resource "azurerm_nat_gateway" "vault" {
-  location            = var.resource_group.location
-  name                = "${var.resource_name_prefix}-vault"
-  resource_group_name = var.resource_group.name
-  sku_name            = "Standard"
-  tags                = var.common_tags
-}
-
-resource "azurerm_public_ip" "vault_nat" {
-  allocation_method   = "Static"
-  location            = var.resource_group.location
-  name                = "${var.resource_name_prefix}-vault-nat"
-  resource_group_name = var.resource_group.name
-  sku                 = "Standard"
-  tags                = var.common_tags
-}
-
-resource "azurerm_nat_gateway_public_ip_association" "vault" {
-  nat_gateway_id       = azurerm_nat_gateway.vault.id
-  public_ip_address_id = azurerm_public_ip.vault_nat.id
-}
-
-resource "azurerm_subnet_nat_gateway_association" "vault" {
-  nat_gateway_id = azurerm_nat_gateway_public_ip_association.vault.nat_gateway_id
-  subnet_id      = azurerm_subnet.vault.id
-}
-

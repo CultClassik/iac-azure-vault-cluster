@@ -48,6 +48,20 @@ resource "azurerm_network_security_rule" "vault_lb_allow_alb" {
   source_port_range           = "*"
 }
 
+resource "azurerm_network_security_rule" "vault_lb_allow_inbound_internet_tcp_8200" {
+  access                      = "Allow"
+  destination_address_prefix  = "*"
+  destination_port_range      = "8200"
+  direction                   = "Inbound"
+  name                        = "Allow_tcp_8200_inbound_Internet"
+  network_security_group_name = azurerm_network_security_group.vault_lb.name
+  priority                    = 120
+  protocol                    = "Tcp"
+  resource_group_name         = var.resource_group.name
+  source_address_prefix       = "Internet"
+  source_port_range           = "*"
+}
+
 resource "azurerm_network_security_rule" "vault_lb_deny_inbound_internet" {
   access                      = "Deny"
   destination_address_prefix  = "*"
@@ -69,6 +83,7 @@ resource "azurerm_subnet_network_security_group_association" "vault_lb" {
   depends_on = [
     azurerm_network_security_rule.vault_lb_allow_gwm,
     azurerm_network_security_rule.vault_lb_allow_alb,
+    azurerm_network_security_rule.vault_lb_allow_inbound_internet_tcp_8200,
     azurerm_network_security_rule.vault_lb_deny_inbound_internet,
   ]
 }

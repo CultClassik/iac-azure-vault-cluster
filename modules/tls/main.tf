@@ -107,3 +107,16 @@ resource "azurerm_key_vault_secret" "vault" {
   tags         = var.common_tags
   value        = tls_locally_signed_cert.server.cert_pfx
 }
+
+resource "azurerm_key_vault_key" "vault" {
+  key_size     = 2048
+  key_type     = "RSA"
+  key_vault_id = azurerm_key_vault.vault.id
+  name         = var.user_supplied_key_vault_key_name
+  tags         = var.common_tags
+
+  key_opts = [
+    "unwrapKey",
+    "wrapKey",
+  ]
+}

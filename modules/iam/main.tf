@@ -11,6 +11,8 @@ locals {
   resource_group_id = "/subscriptions/${data.azurerm_subscription.current.subscription_id}/resourceGroups/${var.resource_group.name}"
 }
 
+# Create identity for Vault nodes
+# Need to use a user-assigned because vmss instances can scale outside of Terraform, presumably
 resource "azurerm_user_assigned_identity" "vault" {
   count = var.user_supplied_vm_identity_id != null ? 0 : 1
 
@@ -20,6 +22,7 @@ resource "azurerm_user_assigned_identity" "vault" {
   tags                = var.common_tags
 }
 
+# Create keyvault access policy for Vault nodes
 resource "azurerm_key_vault_access_policy" "vault_msi" {
   count = var.user_supplied_vm_identity_id != null ? 0 : 1
 

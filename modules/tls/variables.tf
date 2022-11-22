@@ -33,7 +33,13 @@ variable "resource_name_prefix" {
 }
 
 variable "shared_san" {
-  default     = "vault.server.com"
+  # default     = "vault.server.com"
   description = "This is a shared server name that the certs for all Vault nodes contain. This is the same value you will supply as input to the Vault installation module for the leader_tls_servername variable."
+  type        = string
+}
+
+variable "user_supplied_key_vault_key_name" {
+  default     = null
+  description = "(Optional) User-provided Key Vault Key name. Providing this will disable the generation of a Key Vault Key used for Vault auto-unseal"
   type        = string
 }

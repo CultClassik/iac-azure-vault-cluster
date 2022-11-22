@@ -69,12 +69,12 @@ resource "azurerm_application_gateway" "vault" {
     public_ip_address_id = azurerm_public_ip.vault_lb.id
   }
 
-  frontend_ip_configuration {
-    name                          = local.frontend_ip_configuration_name
-    private_ip_address            = var.private_ip_address
-    private_ip_address_allocation = var.private_ip_address == null ? "Dynamic" : "Static"
-    subnet_id                     = var.subnet_id
-  }
+  # frontend_ip_configuration {
+  #   name                          = local.frontend_ip_configuration_name
+  #   private_ip_address            = var.private_ip_address
+  #   private_ip_address_allocation = var.private_ip_address == null ? "Dynamic" : "Static"
+  #   subnet_id                     = var.subnet_id
+  # }
 
   backend_address_pool {
     name = local.backend_address_pool_name
@@ -92,7 +92,8 @@ resource "azurerm_application_gateway" "vault" {
   }
 
   http_listener {
-    frontend_ip_configuration_name = local.frontend_ip_configuration_name
+    # frontend_ip_configuration_name = local.frontend_ip_configuration_name
+    frontend_ip_configuration_name = "${var.resource_name_prefix}-vault-public"
     frontend_port_name             = local.frontend_port_name
     name                           = local.http_listener_name
     protocol                       = "Https"

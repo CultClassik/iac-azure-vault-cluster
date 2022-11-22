@@ -74,12 +74,14 @@ listener "tcp" {
   tls_cert_file      = "/opt/vault/tls/vault-cert.pem"
   tls_key_file       = "/opt/vault/tls/vault-key.pem"
   tls_client_ca_file = "/opt/vault/tls/vault-ca.pem"
+  tls_min_version    = "tls12"
 }
 
 seal "azurekeyvault" {
   tenant_id = "${tenant_id}"
   vault_name = "${key_vault_name}"
   key_name = "${key_vault_key_name}"
+  client_id = "${client_id}"
 }
 
 EOF

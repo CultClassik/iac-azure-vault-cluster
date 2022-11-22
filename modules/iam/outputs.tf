@@ -21,3 +21,12 @@ output "vm_identity_id" {
     azurerm_role_assignment.vault,
   ]
 }
+
+output "vm_identity_client_id" {
+  value = var.user_supplied_vm_identity_id != null ? var.user_supplied_vm_identity_id : azurerm_user_assigned_identity.vault[0].client_id
+
+  depends_on = [
+    azurerm_key_vault_access_policy.vault_msi,
+    azurerm_role_assignment.vault,
+  ]
+}
