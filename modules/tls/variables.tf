@@ -21,7 +21,6 @@ variable "resource_group" {
 }
 
 variable "resource_name_prefix" {
-  default     = "dev"
   description = "Prefix applied to resource names"
   type        = string
 
@@ -32,22 +31,30 @@ variable "resource_name_prefix" {
   }
 }
 
-variable "shared_san" {
-  # default     = "vault.server.com"
-  description = "This is a shared server name that the certs for all Vault nodes contain. This is the same value you will supply as input to the Vault installation module for the leader_tls_servername variable."
-  type        = string
+variable "dns_zone_name" {
+  description = "The full DNS zone name to use when creating a ACME certificate"
 }
 
-variable "user_supplied_key_vault_key_name" {
-  default     = null
-  description = "(Optional) User-provided Key Vault Key name. Providing this will disable the generation of a Key Vault Key used for Vault auto-unseal"
-  type        = string
+variable "dns_zone_rg_name" {
+  description = "THe resource group name which contains the DNS zone from dns_zone_name"
 }
 
-variable "dns_zone_name" {}
-
-variable "dns_zone_rg_name" {}
-
-variable "azure_client_secret" {
+variable "acme_azure_client_secret" {
   description = "For the ACME provider"
+  type        = string
+}
+
+variable "acme_email_address" {
+  description = "Email address used for ACME registration (Lets Encrypt)"
+  type        = string
+}
+
+variable "acme_cert_min_days_remaining" {
+  default     = 30
+  description = ""
+  type        = number
+}
+
+variable "vault_cluster_host_name" {
+  description = "The host name for the Vault cluster. Will be pre-pended to dns_zone_name."
 }

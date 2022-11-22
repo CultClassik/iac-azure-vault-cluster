@@ -1,8 +1,14 @@
+# -----------------------------------------------------------------------------
+# Vault cluster nodes private keys
+# -----------------------------------------------------------------------------
 resource "tls_private_key" "server" {
   algorithm = "RSA"
   rsa_bits  = 2048
 }
 
+# -----------------------------------------------------------------------------
+# Vault cluster nodes self-signed CSR
+# -----------------------------------------------------------------------------
 resource "tls_cert_request" "server" {
   private_key_pem = tls_private_key.server.private_key_pem
 
@@ -11,7 +17,7 @@ resource "tls_cert_request" "server" {
   }
 
   dns_names = [
-    var.shared_san,
+    local.shared_san,
     "localhost",
   ]
 
@@ -23,6 +29,9 @@ resource "tls_cert_request" "server" {
   key_algorithm = tls_private_key.server.algorithm
 }
 
+# -----------------------------------------------------------------------------
+# Vault cluster nodes self-signed certificate
+# -----------------------------------------------------------------------------
 resource "tls_locally_signed_cert" "server" {
   cert_request_pem   = tls_cert_request.server.cert_request_pem
   ca_private_key_pem = tls_private_key.ca.private_key_pem

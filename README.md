@@ -71,9 +71,8 @@ curl --insecure https://vault.dev.verituityplatform.com
 * Use avail zones for agw/lb
 * Use avail zones for vm scale set
 * AGW should prob be moved to external repo for shared use?
-* add dns record(s) for vault
-* generate letsencrypt certificate for vault agw
 * to limit traffic to vault nodes to be from the load balancer, update api_addr to the IP of the lb in modules/user_data/templates/install_vault.sh.tpl
+* add monitoring
 * change script in user_data module to a complete cloud-init.conf?
   * download hashicorp vault binary
   * configure vault
@@ -82,3 +81,74 @@ curl --insecure https://vault.dev.verituityplatform.com
 
 CHANGE APP GW FRONTEND CONFIG FROM PRIVATE TO PUBLIC (LISTENERS)
 REMOVE HCV-VAULT-LB NSG RULE "DENYALLINBOUND_INTERNET?
+<!-- BEGIN_TF_DOCS -->
+## Requirements
+
+| Name | Version |
+|------|---------|
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3.0 |
+| <a name="requirement_acme"></a> [acme](#requirement\_acme) | ~> 2.11.0 |
+| <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | ~> 3.31 |
+| <a name="requirement_random"></a> [random](#requirement\_random) | ~> 3.4 |
+
+## Providers
+
+| Name | Version |
+|------|---------|
+| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | 3.32.0 |
+| <a name="provider_local"></a> [local](#provider\_local) | 2.2.3 |
+| <a name="provider_random"></a> [random](#provider\_random) | 3.4.3 |
+| <a name="provider_tls"></a> [tls](#provider\_tls) | 3.1.50 |
+
+## Modules
+
+| Name | Source | Version |
+|------|--------|---------|
+| <a name="module_iam"></a> [iam](#module\_iam) | ./modules/iam | n/a |
+| <a name="module_keyvault"></a> [keyvault](#module\_keyvault) | ./modules/keyvault | n/a |
+| <a name="module_load_balancer"></a> [load\_balancer](#module\_load\_balancer) | ./modules/load_balancer | n/a |
+| <a name="module_tls"></a> [tls](#module\_tls) | ./modules/tls | n/a |
+| <a name="module_user_data"></a> [user\_data](#module\_user\_data) | ./modules/user_data | n/a |
+| <a name="module_vm"></a> [vm](#module\_vm) | ./modules/vm | n/a |
+| <a name="module_vnet"></a> [vnet](#module\_vnet) | ./modules/vnet | n/a |
+
+## Resources
+
+| Name | Type |
+|------|------|
+| [azurerm_dns_a_record.vault](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/dns_a_record) | resource |
+| [azurerm_key_vault_secret.bastion_ssh_private_key](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault_secret) | resource |
+| [azurerm_linux_virtual_machine.bastion](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/linux_virtual_machine) | resource |
+| [azurerm_network_interface.bastion_nic](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_interface) | resource |
+| [azurerm_public_ip.bastion_pip](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/public_ip) | resource |
+| [azurerm_resource_group.vault](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_group) | resource |
+| [local_file.sshkey](https://registry.terraform.io/providers/hashicorp/local/latest/docs/resources/file) | resource |
+| [local_file.userdata](https://registry.terraform.io/providers/hashicorp/local/latest/docs/resources/file) | resource |
+| [random_string.unique_id](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/string) | resource |
+| [tls_private_key.ssh](https://registry.terraform.io/providers/hashicorp/tls/latest/docs/resources/private_key) | resource |
+| [azurerm_client_config.current](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/client_config) | data source |
+
+## Inputs
+
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| <a name="input_arm_subscription_id"></a> [arm\_subscription\_id](#input\_arm\_subscription\_id) | n/a | `any` | n/a | yes |
+| <a name="input_azure_client_secret"></a> [azure\_client\_secret](#input\_azure\_client\_secret) | For the ACME provider | `any` | n/a | yes |
+| <a name="input_dns_zone_name"></a> [dns\_zone\_name](#input\_dns\_zone\_name) | n/a | `any` | n/a | yes |
+| <a name="input_dns_zone_rg_name"></a> [dns\_zone\_rg\_name](#input\_dns\_zone\_rg\_name) | n/a | `any` | n/a | yes |
+| <a name="input_environment"></a> [environment](#input\_environment) | n/a | `any` | n/a | yes |
+| <a name="input_instance_count"></a> [instance\_count](#input\_instance\_count) | n/a | `any` | n/a | yes |
+| <a name="input_instance_type"></a> [instance\_type](#input\_instance\_type) | n/a | `any` | n/a | yes |
+| <a name="input_lb_autoscale_max_capacity"></a> [lb\_autoscale\_max\_capacity](#input\_lb\_autoscale\_max\_capacity) | n/a | `any` | n/a | yes |
+| <a name="input_lb_autoscale_min_capacity"></a> [lb\_autoscale\_min\_capacity](#input\_lb\_autoscale\_min\_capacity) | n/a | `any` | n/a | yes |
+| <a name="input_lb_private_ip_address"></a> [lb\_private\_ip\_address](#input\_lb\_private\_ip\_address) | n/a | `any` | n/a | yes |
+| <a name="input_location"></a> [location](#input\_location) | n/a | `any` | n/a | yes |
+| <a name="input_network"></a> [network](#input\_network) | n/a | `any` | n/a | yes |
+| <a name="input_product"></a> [product](#input\_product) | n/a | `any` | n/a | yes |
+| <a name="input_vault_version"></a> [vault\_version](#input\_vault\_version) | n/a | `any` | n/a | yes |
+| <a name="input_vm_image_id"></a> [vm\_image\_id](#input\_vm\_image\_id) | n/a | `any` | n/a | yes |
+
+## Outputs
+
+No outputs.
+<!-- END_TF_DOCS -->

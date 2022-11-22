@@ -1,10 +1,14 @@
-# Generate a private key so you can create a CA cert with it.
+# -----------------------------------------------------------------------------
+# Private CA private key
+# -----------------------------------------------------------------------------
 resource "tls_private_key" "ca" {
   algorithm = "RSA"
   rsa_bits  = 2048
 }
 
-# Create a CA cert with the private key you just generated.
+# -----------------------------------------------------------------------------
+# Private CA certificate
+# -----------------------------------------------------------------------------
 resource "tls_self_signed_cert" "ca" {
   private_key_pem = tls_private_key.ca.private_key_pem
 
