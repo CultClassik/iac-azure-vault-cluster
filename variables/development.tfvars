@@ -12,7 +12,7 @@ lb_private_ip_address = "172.16.15.126" # see if we can get this using a functio
 instance_count = 1
 instance_type  = "Standard_D2s_v3"
 
-vault_version = "1.12.1"
+vault_version = "1.12.1-1"
 
 network = {
   address_space        = ""

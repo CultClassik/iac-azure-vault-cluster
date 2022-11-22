@@ -22,7 +22,7 @@ resource "azurerm_subnet" "vault_abs" {
   count = var.abs_address_prefix == null ? 0 : 1
 
   address_prefixes     = [var.abs_address_prefix] # at least /27 or larger
-name                 = "${var.resource_name_prefix}-bastion"
+  name                 = "${var.resource_name_prefix}-bastion"
   resource_group_name  = var.resource_group.name
   virtual_network_name = azurerm_virtual_network.vault.name
 }

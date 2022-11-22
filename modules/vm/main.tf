@@ -38,10 +38,10 @@ resource "azurerm_linux_virtual_machine_scale_set" "vault_cluster" {
     ip_configuration {
       # load_balancer_backend_address_pool_ids = var.backend_address_pool_ids
       application_gateway_backend_address_pool_ids = var.backend_address_pool_ids
-      application_security_group_ids = var.application_security_group_ids
-      name                           = "${var.resource_name_prefix}-vault"
-      primary                        = true
-      subnet_id                      = var.subnet_id
+      application_security_group_ids               = var.application_security_group_ids
+      name                                         = "${var.resource_name_prefix}-vault"
+      primary                                      = true
+      subnet_id                                    = var.subnet_id
     }
   }
 

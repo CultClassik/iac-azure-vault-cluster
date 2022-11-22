@@ -15,7 +15,7 @@ resource "azurerm_public_ip" "vault_lb" {
 resource "azurerm_dns_a_record" "vault" {
   name                = "vault"
   zone_name           = "dev.verituityplatform.com" # data.azurerm_dns_zone.vty.name
-  resource_group_name = "common" # azurerm_resource_group.vault.name
+  resource_group_name = "common"                    # azurerm_resource_group.vault.name
   ttl                 = 300
   target_resource_id  = azurerm_public_ip.vault_lb.id
 }
@@ -37,25 +37,40 @@ resource "azurerm_lb_backend_address_pool" "vault_lb_pool" {
   name            = "vault-lb-pool"
 }
 
-resource "azurerm_lb_probe" "lb_web_probe" {
-  # resource_group_name = azurerm_resource_group.vault.name
-  loadbalancer_id     = azurerm_lb.vault_lb.id
-  name                = "vault-health-probe"
-  port                = 8200
-  protocol            = "Https"
-  # request_path        = "/v1/sys/health"
-  request_path = "/v1/sys/health?activecode=200&standbycode=200&sealedcode=200&uninitcode=200"
-}
+# disabling for now, hopeing nodes will redirect to the leader on their own
+# resource "azurerm_lb_probe" "lb_web_probe" {
+#   # resource_group_name = azurerm_resource_group.vault.name
+#   loadbalancer_id = azurerm_lb.vault_lb.id
+#   name            = "vault-health-probe"
+#   port            = 8200
+#   protocol        = "Https"
+#   # request_path        = "/v1/sys/health"
+#   request_path = "/v1/sys/health?activecode=200&standbycode=200&sealedcode=200&uninitcode=200"
+# }
 
-resource "azurerm_lb_nat_rule" "vault" {
-  resource_group_name            = azurerm_resource_group.vault.name
-  loadbalancer_id                = azurerm_lb.vault_lb.id
+resource "azurerm_lb_rule" "vault" {
   name                           = "vault-api"
+  loadbalancer_id                = azurerm_lb.vault_lb.id
   protocol                       = "Tcp"
   frontend_port                  = 443
   backend_port                   = 8200
+  backend_address_pool_ids       = [azurerm_lb_backend_address_pool.vault_lb_pool.id]
   frontend_ip_configuration_name = "${azurerm_public_ip.vault_lb.name}-fe-cfg"
+  # probe_id                       = azurerm_lb_probe.lb_web_probe.id
+
+  # disable_outbound_snat = true
 }
+
+# resource "azurerm_lb_outbound_rule" "vault" {
+#   name                    = "OutboundRule"
+#   loadbalancer_id         = azurerm_lb.vault_lb.id
+#   protocol                = "Tcp"
+#   backend_address_pool_id = azurerm_lb_backend_address_pool.vault_lb_pool.id
+
+#   frontend_ip_configuration {
+#     name = "${azurerm_public_ip.vault_lb.name}-fe-cfg"
+#   }
+# }
 
 # resource "azurerm_network_interface_backend_address_pool_association" "vault" {
 #   for_each                = module.vault_vms

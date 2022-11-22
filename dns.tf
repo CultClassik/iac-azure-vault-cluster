@@ -1,14 +1,7 @@
-## delegate dns for the subzone
-data "azurerm_dns_zone" "parent" {
-  name                = var.dns_zone_parent_name
-  resource_group_name = var.dns_zone_parent_rg_name
+resource "azurerm_dns_a_record" "vault" {
+  name                = "vault"
+  zone_name           = "dev.verituityplatform.com" # data.azurerm_dns_zone.vty.name
+  resource_group_name = "common"                    # azurerm_resource_group.vault.name
+  ttl                 = 300
+  target_resource_id  = module.load_balancer.public_ip_id
 }
-
-# resource "azurerm_dns_ns_record" "aks_dns" {
-#   name                = "aksnp"
-#   zone_name           = data.azurerm_dns_zone.parent.name
-#   resource_group_name = data.azurerm_dns_zone.parent.resource_group_name
-#   ttl                 = 300
-#   records             = azurerm_dns_zone.aks_dns.name_servers
-#   tags                = local.tags
-# }
