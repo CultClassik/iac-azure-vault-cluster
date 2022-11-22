@@ -101,6 +101,9 @@ resource "azurerm_key_vault_certificate" "vault" {
   }
 }
 
+# -----------------------------------------------------------------------------
+# Vault server certificates to be downloaded by VMSS instances on boot
+# -----------------------------------------------------------------------------
 resource "azurerm_key_vault_secret" "vault" {
   key_vault_id = azurerm_key_vault_access_policy.vault.key_vault_id
   name         = "${var.resource_name_prefix}-vault-vm-tls"
@@ -108,6 +111,9 @@ resource "azurerm_key_vault_secret" "vault" {
   value        = tls_locally_signed_cert.server.cert_pfx
 }
 
+# -----------------------------------------------------------------------------
+# HashiCorp Vault master key
+# -----------------------------------------------------------------------------
 resource "azurerm_key_vault_key" "vault" {
   key_size     = 2048
   key_type     = "RSA"

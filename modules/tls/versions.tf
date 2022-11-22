@@ -18,5 +18,9 @@ terraform {
       source  = "troyready/tls"
       version = "3.1.50"
     }
+    acme = {
+      source  = "vancluever/acme"
+      version = ">= 2.9.0"
+    }
   }
 }

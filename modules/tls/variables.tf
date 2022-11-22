@@ -43,3 +43,11 @@ variable "user_supplied_key_vault_key_name" {
   description = "(Optional) User-provided Key Vault Key name. Providing this will disable the generation of a Key Vault Key used for Vault auto-unseal"
   type        = string
 }
+
+variable "dns_zone_name" {}
+
+variable "dns_zone_rg_name" {}
+
+variable "azure_client_secret" {
+  description = "For the ACME provider"
+}

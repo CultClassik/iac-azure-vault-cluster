@@ -57,6 +57,12 @@ resource "azurerm_linux_virtual_machine" "bastion" {
 
 }
 
+resource "azurerm_key_vault_secret" "bastion_ssh_private_key" {
+  key_vault_id = module.tls.key_vault_id
+  name         = "${local.resource_name_prefix}-bastion-ssh-private-key"
+  tags         = local.tags
+  value        = tls_private_key.ssh.private_key_openssh
+}
 
 resource "local_file" "sshkey" {
   content         = tls_private_key.ssh.private_key_openssh

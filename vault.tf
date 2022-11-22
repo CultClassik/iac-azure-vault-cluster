@@ -52,13 +52,14 @@ module "user_data" {
 module "load_balancer" {
   source = "./modules/load_balancer"
 
-  autoscale_max_capacity       = var.lb_autoscale_max_capacity
-  autoscale_min_capacity       = var.lb_autoscale_min_capacity
-  backend_ca_cert              = module.tls.root_ca_pem
-  backend_server_name          = local.shared_san
-  common_tags                  = local.tags
-  health_check_path            = local.health_check_path
-  key_vault_ssl_cert_secret_id = module.tls.key_vault_ssl_cert_secret_id
+  autoscale_max_capacity = var.lb_autoscale_max_capacity
+  autoscale_min_capacity = var.lb_autoscale_min_capacity
+  backend_ca_cert        = module.tls.root_ca_pem
+  backend_server_name    = local.shared_san
+  common_tags            = local.tags
+  health_check_path      = local.health_check_path
+  # key_vault_ssl_cert_secret_id = module.tls.key_vault_ssl_cert_secret_id
+  key_vault_ssl_cert_secret_id = module.tls.key_vault_lb_cert_secret_id
   private_ip_address           = var.lb_private_ip_address
   resource_group               = azurerm_resource_group.vault
   resource_name_prefix         = local.resource_name_prefix

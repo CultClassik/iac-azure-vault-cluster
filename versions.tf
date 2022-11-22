@@ -13,5 +13,10 @@ terraform {
       source  = "hashicorp/random"
       version = "~> 3.4"
     }
+    acme = {
+      source  = "vancluever/acme"
+      version = "~> 2.11.0"
+    }
+
   }
 }

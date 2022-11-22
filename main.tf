@@ -10,6 +10,10 @@ provider "azurerm" {
   subscription_id = var.arm_subscription_id
 }
 
+provider "acme" {
+  server_url = "https://acme-v02.api.letsencrypt.org/directory"
+}
+
 data "azurerm_client_config" "current" {}
 
 resource "random_string" "unique_id" {
@@ -21,7 +25,13 @@ locals {
   vault_env            = var.environment == lower("production") ? "prod" : "nonprod"
   resource_name_prefix = "hcv"
   resource_base_name   = "${local.resource_name_prefix}-${random_string.unique_id.result}-RESTYPE-${local.vault_env}-${var.location}"
-  shared_san           = format("vault.%s", var.dns_zone_parent_name)
+  shared_san           = format("vault.%s", var.dns_zone_name)
+  env_short_name_ref = {
+    development = "dev",
+    staging     = "stg",
+    production  = "prod"
+  }
+  env_short_name = local.env_short_name_ref[var.environment]
 
   tags = {
     repo_name   = "iac-azure-vault-cluster",
@@ -49,6 +59,9 @@ module "tls" {
   resource_name_prefix             = local.resource_name_prefix
   shared_san                       = local.shared_san
   user_supplied_key_vault_key_name = local.user_supplied_key_vault_key_name
+  dns_zone_name                    = var.dns_zone_name
+  dns_zone_rg_name                 = var.dns_zone_rg_name
+  azure_client_secret              = var.azure_client_secret
 }
 
 module "vnet" {

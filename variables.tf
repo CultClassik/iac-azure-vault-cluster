@@ -6,10 +6,6 @@ variable "location" {}
 
 variable "product" {}
 
-variable "dns_zone_parent_name" {}
-
-variable "dns_zone_parent_rg_name" {}
-
 variable "lb_autoscale_max_capacity" {}
 
 variable "lb_autoscale_min_capacity" {}
@@ -27,3 +23,11 @@ variable "vm_image_id" {}
 variable "vault_version" {}
 
 variable "network" {}
+
+variable "dns_zone_name" {}
+
+variable "dns_zone_rg_name" {}
+
+variable "azure_client_secret" {
+  description = "For the ACME provider"
+}

@@ -27,3 +27,8 @@ output "root_ca_pem" {
 output "shared_san" {
   value = tls_cert_request.server.dns_names[0]
 }
+
+output "key_vault_lb_cert_secret_id" {
+  description = "Secret ID of Key Vault Certificate for Vault TLS"
+  value       = azurerm_key_vault_certificate.lb.secret_id
+}
