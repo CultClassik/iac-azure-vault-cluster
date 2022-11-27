@@ -6,7 +6,7 @@
  */
 
 variable "application_security_group_ids" {
-  default = []
+  default     = []
   description = "Application Security Group IDs for the VMs"
   type        = list(string)
 }

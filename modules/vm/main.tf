@@ -16,6 +16,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "vault_cluster" {
   source_image_id     = var.user_supplied_source_image_id
   zone_balance        = var.zones == null ? false : true
   user_data           = var.user_data
+  custom_data         = var.user_data
   zones               = var.zones
 
   additional_capabilities {
@@ -35,20 +36,13 @@ resource "azurerm_linux_virtual_machine_scale_set" "vault_cluster" {
     primary = true
 
     ip_configuration {
-      load_balancer_backend_address_pool_ids = var.backend_address_pool_ids
-      # application_gateway_backend_address_pool_ids = var.backend_address_pool_ids
+      # load_balancer_backend_address_pool_ids = var.backend_address_pool_ids
+      application_gateway_backend_address_pool_ids = var.backend_address_pool_ids
       application_security_group_ids               = var.application_security_group_ids
       name                                         = "${var.resource_name_prefix}-vault"
       primary                                      = true
       subnet_id                                    = var.subnet_id
     }
-
-      # public_ip_address_configuration {
-      #   name              = "test1-public"
-      #   domain_name_label = "${var.resource_group}"
-      #   idle_timeout      = 4
-      # }
-
   }
 
   identity {

@@ -58,3 +58,6 @@ variable "vm_scale_set_name" {
   description = "Name for virtual machine scale set"
   type        = string
 }
+
+#https://github.com/hashicorp/vault/issues/7115
+variable "vm_identity_client_id" {}

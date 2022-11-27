@@ -18,6 +18,7 @@ locals {
       tenant_id             = var.tenant_id
       vault_version         = var.vault_version
       vm_scale_set_name     = var.vm_scale_set_name
+      client_id             = var.vm_identity_client_id
     }
   )
 }
