@@ -140,7 +140,7 @@ REMOVE HCV-VAULT-LB NSG RULE "DENYALLINBOUND_INTERNET?
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_agw_backend_address_pool_id"></a> [agw\_backend\_address\_pool\_id](#input\_agw\_backend\_address\_pool\_id) | The ID of the backend address pool form the AGW to assign the vm scale set instances to | `string` | n/a | yes |
-| <a name="input_arm_subscription_id"></a> [arm\_subscription\_id](#input\_arm\_subscription\_id) | n/a | `any` | n/a | yes |
+| <a name="input_az_sub_id"></a> [az\_sub\_id](#input\_az\_sub\_id) | n/a | `any` | n/a | yes |
 | <a name="input_dns_zone_name"></a> [dns\_zone\_name](#input\_dns\_zone\_name) | n/a | `any` | n/a | yes |
 | <a name="input_environment"></a> [environment](#input\_environment) | n/a | `any` | n/a | yes |
 | <a name="input_instance_count"></a> [instance\_count](#input\_instance\_count) | n/a | `any` | n/a | yes |

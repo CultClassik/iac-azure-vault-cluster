@@ -1,6 +1,6 @@
 variable "environment" {}
 
-variable "arm_subscription_id" {}
+variable "az_sub_id" {}
 
 variable "location" {}
 

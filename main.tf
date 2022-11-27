@@ -7,7 +7,7 @@ provider "azurerm" {
       roll_instances_when_required = false
     }
   }
-  subscription_id = var.arm_subscription_id
+  subscription_id = var.az_sub_id
 }
 
 data "azurerm_client_config" "current" {}
