@@ -1,17 +1,3 @@
-resource "azurerm_subnet" "vault_lb" {
-  name                 = "${var.resource_name_prefix}-vault-lb"
-  resource_group_name  = var.resource_group.name
-  virtual_network_name = azurerm_virtual_network.vault.name
-
-  address_prefixes = [
-    var.lb_address_prefix,
-  ]
-
-  service_endpoints = [
-    "Microsoft.KeyVault",
-  ]
-}
-
 # https://docs.microsoft.com/en-us/azure/application-gateway/application-gateway-faq#how-do-i-use-application-gateway-v2-with-only-private-frontend-ip-address
 resource "azurerm_network_security_group" "vault_lb" {
   location            = var.resource_group.location
@@ -77,7 +63,7 @@ resource "azurerm_network_security_rule" "vault_lb_deny_inbound_internet" {
 }
 
 resource "azurerm_subnet_network_security_group_association" "vault_lb" {
-  subnet_id                 = azurerm_subnet.vault_lb.id
+  subnet_id                 = var.agw_subnet_id
   network_security_group_id = azurerm_network_security_group.vault_lb.id
 
   depends_on = [

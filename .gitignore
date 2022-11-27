@@ -33,5 +33,7 @@ override.tf.json
 # example: *tfplan*
 
 .dccache
-secrets
+secrets*
 *.plan
+test
+local_files.tf

@@ -1,3 +1,13 @@
+# iac-azure-vault-cluster
+Manages a HashiCorp Vault cluster in Azure.
+
+## Features
+* Creates a cluster with X nodes
+* Auto unseal with Azure Key Vault
+* Load balanced with an Azure Application Gateway
+* Lets Encrypt certificate for the cluster
+* Linux VM as a Bastion host
+* All initial secrets stored in Azure Key Vault
 
 ## Modules
 | Module Name | Description |
@@ -35,13 +45,13 @@ export VAULT_SKIP_VERIFY=true
 # copy the unseal keys and root token - one time operation per cluster after provisioning
 # these should be stored securely, like in an azure keyvault
 azureuser@hcv-Tbngw-vmss-nonprod-eastus000000:~$ vault operator init
-Recovery Key 1: G+Zd7a1LTQf+wKZQn+OjqHPjICVBj1TSmc+sCu0jsClP
-Recovery Key 2: rgM8h0Pyp4KYsn1pJZnjFRUDWKgHwP0RFpj8mqK/RrGY
-Recovery Key 3: UsSm4oCQKf0o4T6ZmaeK1PIA16pig5hvfS1AK39biujZ
-Recovery Key 4: 0PukTqpy9JS1mtH2oThcCxeewqQZN1o8+ABI/aXIsVwL
-Recovery Key 5: DTjPtuqLZT3ipsaM8QlUKg1sgmK5Ez/3sk7Xs70UTFnD
+Recovery Key 1: 5Dq66YoWKqYhU0EnKj4d2OJqHD34Z4gsExqtol83XYnV
+Recovery Key 2: /Kgchx1ozP4HzSpqBHggr8tR8kU2clpg/yXLVhurKqhB
+Recovery Key 3: ecbDB4ZDeZPy+Yoqz3ZYm/kHDixlm8FVBgoxKdnWOMuZ
+Recovery Key 4: MWNaAkFVdPJ6WWUl/UN0m7kqVUXV5thNyg3UIxxG5sFo
+Recovery Key 5: 56yNsfDzLaTU1UsA5FzsEZxRvgQ5zghRlR0G5QeSGhiH
 
-Initial Root Token: hvs.CL3llw6N4byhEkSomWqG1UsR
+Initial Root Token: hvs.o9npdWL24GjRzsxVYlVDEMwn
 
 Success! Vault is initialized
 
@@ -71,7 +81,7 @@ curl --insecure https://vault.dev.verituityplatform.com
 * Use remote state to fetch DNS details like dns parent group rg name, etc
 * Use avail zones for agw/lb
 * Use avail zones for vm scale set
-* AGW should prob be moved to external repo for shared use?
+* Use resource_vesionless_id for akv secrets
 * to limit traffic to vault nodes to be from the load balancer, update api_addr to the IP of the lb in modules/user_data/templates/install_vault.sh.tpl
 * add monitoring
 * change script in user_data module to a complete cloud-init.conf?
@@ -88,66 +98,64 @@ REMOVE HCV-VAULT-LB NSG RULE "DENYALLINBOUND_INTERNET?
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3.0 |
-| <a name="requirement_acme"></a> [acme](#requirement\_acme) | ~> 2.11.0 |
 | <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | ~> 3.31 |
-| <a name="requirement_random"></a> [random](#requirement\_random) | ~> 3.4 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
 | <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | 3.32.0 |
-| <a name="provider_local"></a> [local](#provider\_local) | 2.2.3 |
-| <a name="provider_random"></a> [random](#provider\_random) | 3.4.3 |
-| <a name="provider_tls"></a> [tls](#provider\_tls) | 3.1.50 |
 
 ## Modules
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_iam"></a> [iam](#module\_iam) | ./modules/iam | n/a |
-| <a name="module_keyvault"></a> [keyvault](#module\_keyvault) | ./modules/keyvault | n/a |
-| <a name="module_load_balancer"></a> [load\_balancer](#module\_load\_balancer) | ./modules/load_balancer | n/a |
-| <a name="module_tls"></a> [tls](#module\_tls) | ./modules/tls | n/a |
+| <a name="module_nat_gateway"></a> [nat\_gateway](#module\_nat\_gateway) | ./modules/nat_gateway | n/a |
+| <a name="module_netsec"></a> [netsec](#module\_netsec) | ./modules/netsec | n/a |
 | <a name="module_user_data"></a> [user\_data](#module\_user\_data) | ./modules/user_data | n/a |
 | <a name="module_vm"></a> [vm](#module\_vm) | ./modules/vm | n/a |
-| <a name="module_vnet"></a> [vnet](#module\_vnet) | ./modules/vnet | n/a |
 
 ## Resources
 
 | Name | Type |
 |------|------|
-| [azurerm_dns_a_record.vault](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/dns_a_record) | resource |
-| [azurerm_key_vault_secret.bastion_ssh_private_key](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault_secret) | resource |
 | [azurerm_linux_virtual_machine.bastion](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/linux_virtual_machine) | resource |
 | [azurerm_network_interface.bastion_nic](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_interface) | resource |
+| [azurerm_network_interface_application_security_group_association.bastion](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_interface_application_security_group_association) | resource |
 | [azurerm_public_ip.bastion_pip](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/public_ip) | resource |
-| [azurerm_resource_group.vault](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_group) | resource |
-| [local_file.sshkey](https://registry.terraform.io/providers/hashicorp/local/latest/docs/resources/file) | resource |
-| [local_file.userdata](https://registry.terraform.io/providers/hashicorp/local/latest/docs/resources/file) | resource |
-| [random_string.unique_id](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/string) | resource |
-| [tls_private_key.ssh](https://registry.terraform.io/providers/hashicorp/tls/latest/docs/resources/private_key) | resource |
 | [azurerm_client_config.current](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/client_config) | data source |
+| [azurerm_key_vault.vault](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/key_vault) | data source |
+| [azurerm_key_vault_secret.akv_secret_id_vault_vm_tls](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/key_vault_secret) | data source |
+| [azurerm_key_vault_secret.bastion_private_key](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/key_vault_secret) | data source |
+| [azurerm_key_vault_secret.bastion_public_key](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/key_vault_secret) | data source |
+| [azurerm_key_vault_secret.vault_private_key](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/key_vault_secret) | data source |
+| [azurerm_key_vault_secret.vault_public_key](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/key_vault_secret) | data source |
+| [azurerm_resource_group.vault](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/resource_group) | data source |
+| [azurerm_subnet.agw](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/subnet) | data source |
+| [azurerm_subnet.bastion](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/subnet) | data source |
+| [azurerm_subnet.vault](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/subnet) | data source |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| <a name="input_agw_backend_address_pool_id"></a> [agw\_backend\_address\_pool\_id](#input\_agw\_backend\_address\_pool\_id) | The ID of the backend address pool form the AGW to assign the vm scale set instances to | `string` | n/a | yes |
 | <a name="input_arm_subscription_id"></a> [arm\_subscription\_id](#input\_arm\_subscription\_id) | n/a | `any` | n/a | yes |
-| <a name="input_azure_client_secret"></a> [azure\_client\_secret](#input\_azure\_client\_secret) | For the ACME provider | `any` | n/a | yes |
 | <a name="input_dns_zone_name"></a> [dns\_zone\_name](#input\_dns\_zone\_name) | n/a | `any` | n/a | yes |
-| <a name="input_dns_zone_rg_name"></a> [dns\_zone\_rg\_name](#input\_dns\_zone\_rg\_name) | n/a | `any` | n/a | yes |
 | <a name="input_environment"></a> [environment](#input\_environment) | n/a | `any` | n/a | yes |
 | <a name="input_instance_count"></a> [instance\_count](#input\_instance\_count) | n/a | `any` | n/a | yes |
 | <a name="input_instance_type"></a> [instance\_type](#input\_instance\_type) | n/a | `any` | n/a | yes |
-| <a name="input_lb_autoscale_max_capacity"></a> [lb\_autoscale\_max\_capacity](#input\_lb\_autoscale\_max\_capacity) | n/a | `any` | n/a | yes |
-| <a name="input_lb_autoscale_min_capacity"></a> [lb\_autoscale\_min\_capacity](#input\_lb\_autoscale\_min\_capacity) | n/a | `any` | n/a | yes |
-| <a name="input_lb_private_ip_address"></a> [lb\_private\_ip\_address](#input\_lb\_private\_ip\_address) | n/a | `any` | n/a | yes |
+| <a name="input_key_vault_name"></a> [key\_vault\_name](#input\_key\_vault\_name) | Name of the Keyvault to use. Could be sourced from remote state. | `string` | n/a | yes |
 | <a name="input_location"></a> [location](#input\_location) | n/a | `any` | n/a | yes |
-| <a name="input_network"></a> [network](#input\_network) | n/a | `any` | n/a | yes |
-| <a name="input_product"></a> [product](#input\_product) | n/a | `any` | n/a | yes |
+| <a name="input_subnet_name_bastion"></a> [subnet\_name\_bastion](#input\_subnet\_name\_bastion) | n/a | `any` | n/a | yes |
+| <a name="input_subnet_name_vault"></a> [subnet\_name\_vault](#input\_subnet\_name\_vault) | n/a | `any` | n/a | yes |
+| <a name="input_subnet_name_vault_agw"></a> [subnet\_name\_vault\_agw](#input\_subnet\_name\_vault\_agw) | n/a | `any` | n/a | yes |
+| <a name="input_vault_identity_client_id"></a> [vault\_identity\_client\_id](#input\_vault\_identity\_client\_id) | The Client ID of the MSI used by the Vault cluster nodes. Could be sourced from remote state. | `string` | n/a | yes |
+| <a name="input_vault_identity_id"></a> [vault\_identity\_id](#input\_vault\_identity\_id) | The resource ID of the MSI used by the Vault cluster nodes. Could be sourced from remote state. | `string` | n/a | yes |
 | <a name="input_vault_version"></a> [vault\_version](#input\_vault\_version) | n/a | `any` | n/a | yes |
 | <a name="input_vm_image_id"></a> [vm\_image\_id](#input\_vm\_image\_id) | n/a | `any` | n/a | yes |
+| <a name="input_vnet_name"></a> [vnet\_name](#input\_vnet\_name) | n/a | `any` | n/a | yes |
+| <a name="input_vnet_rg_name"></a> [vnet\_rg\_name](#input\_vnet\_rg\_name) | n/a | `any` | n/a | yes |
 
 ## Outputs
 

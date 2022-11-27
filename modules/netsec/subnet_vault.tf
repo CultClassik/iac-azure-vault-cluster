@@ -1,17 +1,3 @@
-resource "azurerm_subnet" "vault" {
-  name                 = "${var.resource_name_prefix}-vault"
-  resource_group_name  = var.resource_group.name
-  virtual_network_name = azurerm_virtual_network.vault.name
-
-  address_prefixes = [
-    var.vault_address_prefix,
-  ]
-
-  service_endpoints = [
-    "Microsoft.KeyVault",
-  ]
-}
-
 resource "azurerm_application_security_group" "vault" {
   location            = var.resource_group.location
   name                = "${var.resource_name_prefix}-vault"
@@ -119,8 +105,8 @@ resource "azurerm_network_security_rule" "vault_other_inbound" {
 }
 
 resource "azurerm_subnet_network_security_group_association" "vault" {
+  subnet_id                 = var.vault_subnet_id
   network_security_group_id = azurerm_network_security_group.vault.id
-  subnet_id                 = azurerm_subnet.vault.id
 
   depends_on = [
     azurerm_network_security_rule.vault_internet_access,

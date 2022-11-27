@@ -1,0 +1,15 @@
+# -----------------------------------------------------------------------------
+# Copy this file to root for local testing. Will create files to make life easier.
+# -----------------------------------------------------------------------------
+
+resource "local_file" "sshkey" {
+  content         = data.azurerm_key_vault_secret.bastion_private_key.value
+  filename        = "secrets/key.rsa"
+  file_permission = "0600"
+}
+
+resource "local_file" "userdata" {
+  content         = base64decode(module.user_data.vault_userdata_base64_encoded)
+  filename        = "secrets/custom_data.sh"
+  file_permission = "0600"
+}
