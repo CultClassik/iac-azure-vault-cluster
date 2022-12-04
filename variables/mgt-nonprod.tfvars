@@ -1,6 +1,8 @@
-location      = "eastus"
+az_sub_id = "a75c42cc-a976-4b30-95c6-aba1c6886cba" # management
+
+location      = "eastus2"
 environment   = "nonprod"
-dns_zone_name = "dev.verituityplatform.com"
+dns_zone_name = "nonprod.verituityplatform.com"
 # dns_zone_rg_name = "common"
 
 # lb_autoscale_max_capacity = 3
@@ -15,10 +17,10 @@ instance_type  = "Standard_D2s_v3"
 vault_version = "1.12.1-1"
 
 vnet_rg_name          = "hub-rg-nop-eastus"
-vnet_name             = "hub-vnet-hub-nop-eastus"
-subnet_name_bastion   = "hub-snet-bastion-nop-eastus"
-subnet_name_vault     = "hub-snet-vault-nop-eastus"
-subnet_name_vault_agw = "hub-snet-agw-nop-eastus"
+vnet_name             = "mgmt-vnet-hub-nop-eastus2"
+subnet_name_bastion   = "mgmt-snet-agw-nop-eastus2"
+subnet_name_vault     = "mgmt-snet-vault-nop-eastus2"
+subnet_name_vault_agw = "mgmt-snet-agw-nop-eastus2"
 
 # network = {
 #   address_space        = ""
@@ -29,14 +31,14 @@ subnet_name_vault_agw = "hub-snet-agw-nop-eastus"
 vm_image_id = "18.04-LTS"
 
 # could get this from remote state, but data source requires azuread provider
-key_vault_name = "hcv743b85f99bc509"
+key_vault_name = "hcv4b3b1090d1c267"
 # key_vault_rg_name = key vault and vault will live in the same RG so re-use the var rg_name
 # rg_name = "hcv-rg-nonprod-eastus"
 
 # vault_identity_id is used by the scale set resource, vault_identity_client_id is required for user data/custom data
 # could get these from remote state
-vault_identity_id        = "/subscriptions/3810f594-f91b-404a-b6eb-ebf9b9e4f62c/resourceGroups/hcv-rg-nonprod-eastus/providers/Microsoft.ManagedIdentity/userAssignedIdentities/hcv-identity-nonprod-vault"
-vault_identity_client_id = "1a7d92eb-da03-4354-b1ce-f37669712f12"
+vault_identity_id        = "subscriptions/a75c42cc-a976-4b30-95c6-aba1c6886cba/resourceGroups/hcv-rg-nonprod-eastus2/providers/Microsoft.ManagedIdentity/userAssignedIdentities/hcv-identity-nonprod-vault"
+vault_identity_client_id = "e3442d8b-d247-4c44-ad5a-45a23bda6f00"
 
 # could get this from remote state
-agw_backend_address_pool_id = "/subscriptions/3810f594-f91b-404a-b6eb-ebf9b9e4f62c/resourceGroups/agw-rg-nonprod/providers/Microsoft.Network/applicationGateways/agw-nonprod/backendAddressPools/vault-backend-pool"
+agw_backend_address_pool_id = "/subscriptions/a75c42cc-a976-4b30-95c6-aba1c6886cba/resourceGroups/agw-rg-nonprod/providers/Microsoft.Network/applicationGateways/agw-nonprod/backendAddressPools/vault-backend-pool"

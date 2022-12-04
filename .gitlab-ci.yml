@@ -1,50 +1,33 @@
-# -----------------------------------------------------------------------------
-# Requirements:
-# jq
-# custom scripts, expected to be included in docker image
-# -----------------------------------------------------------------------------
 include:
   - project: 'verituity/devops/cicd-templates'
-    file: '/infra/terraform.yml'
-    ref: v0.4-stable
+    file: '/infra/terraform-matrix.yml'
+    # ref: v0.4-stable
+    ref: feature/backend-debug-output
 
 variables:
   TF_CLI_VERSION: '1.3.5'
-  TF_HTTP_USERNAME: gitlab-ci-token
-  TF_HTTP_PASSWORD: $GITLAB_PASSWORD
+  GITLAB_TOKEN: $TERRAFORM_GITLAB_TOKEN
 
 # -----------------------------------------------------------------------------
-#                                    Plan - NONPROD
+#  PLAN STAGE
 # -----------------------------------------------------------------------------
-terraform_plan:
-  extends: .terraform_plan
-  stage: test
-  rules:
-    - if: $CI_PIPELINE_SOURCE == 'push'
-    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
-    - if: $CI_PIPELINE_SOURCE == 'web'
-  variables:
-    TF_VAR_az_sub_id: $ARM_SUBSCRIPTION_ID_VTY_NONPROD
-    TF_VARS_FILE: nonprod
-    TF_HTTP_ADDRESS: "https://gitlab.com/api/v4/projects/${CI_PROJECT_ID}/terraform/state/nonprod"
-    TF_HTTP_LOCK_ADDRESS: "https://gitlab.com/api/v4/projects/${CI_PROJECT_ID}/terraform/state/nonprod/lock"
-    TF_HTTP_UNLOCK_ADDRESS: "https://gitlab.com/api/v4/projects/${CI_PROJECT_ID}/terraform/state/nonprod/lock"
+plan:
+  extends: .tf_plan
+  parallel:
+    matrix:
+      - TF_VARS_FILE: mgt-nonprod
+        TF_WORKSPACE: $TF_VARS_FILE
+        TF_AZ_BACKEND: $az_backend_management_nonprod
+        TF_VAR_az_sub_id: $ARM_SUBSCRIPTION_ID_CAF_MANAGEMENT
 
 # -----------------------------------------------------------------------------
-#                                    Apply - NONPROD
+#  APPLY STAGE
 # -----------------------------------------------------------------------------
-terraform_apply:
-  extends: .terraform_apply
-  dependencies:
-    - terraform_plan
-  stage: apply
-  when: manual
-  rules:
-    - if: $CI_PIPELINE_SOURCE == 'push' && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-    - if: $CI_PIPELINE_SOURCE == 'web'
-  variables:
-    TF_VAR_az_sub_id: $ARM_SUBSCRIPTION_ID_VTY_NONPROD
-    TF_VARS_FILE: nonprod
-    TF_HTTP_ADDRESS: "https://gitlab.com/api/v4/projects/${CI_PROJECT_ID}/terraform/state/nonprod"
-    TF_HTTP_LOCK_ADDRESS: "https://gitlab.com/api/v4/projects/${CI_PROJECT_ID}/terraform/state/nonprod/lock"
-    TF_HTTP_UNLOCK_ADDRESS: "https://gitlab.com/api/v4/projects/${CI_PROJECT_ID}/terraform/state/nonprod/lock"
+apply:
+  extends: .tf_apply
+  parallel:
+    matrix:
+      - TF_VARS_FILE: mgt-nonprod
+        TF_WORKSPACE: $TF_VARS_FILE
+        TF_AZ_BACKEND: $az_backend_management_nonprod
+        TF_VAR_az_sub_id: $ARM_SUBSCRIPTION_ID_CAF_MANAGEMENT
