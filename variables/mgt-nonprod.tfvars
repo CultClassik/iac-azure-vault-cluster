@@ -16,7 +16,7 @@ instance_type  = "Standard_D2s_v3"
 
 vault_version = "1.12.1-1"
 
-vnet_rg_name          = "hub-rg-nop-eastus"
+vnet_rg_name          = "mgmt-rg-nop-eastus2"
 vnet_name             = "mgmt-vnet-hub-nop-eastus2"
 subnet_name_bastion   = "mgmt-snet-agw-nop-eastus2"
 subnet_name_vault     = "mgmt-snet-vault-nop-eastus2"
