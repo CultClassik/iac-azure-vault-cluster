@@ -37,7 +37,7 @@ key_vault_name = "hcv4b3b1090d1c267"
 
 # vault_identity_id is used by the scale set resource, vault_identity_client_id is required for user data/custom data
 # could get these from remote state
-vault_identity_id        = "subscriptions/a75c42cc-a976-4b30-95c6-aba1c6886cba/resourceGroups/hcv-rg-nonprod-eastus2/providers/Microsoft.ManagedIdentity/userAssignedIdentities/hcv-identity-nonprod-vault"
+vault_identity_id        = "/subscriptions/a75c42cc-a976-4b30-95c6-aba1c6886cba/resourceGroups/hcv-rg-nonprod-eastus2/providers/Microsoft.ManagedIdentity/userAssignedIdentities/hcv-identity-nonprod-vault"
 vault_identity_client_id = "e3442d8b-d247-4c44-ad5a-45a23bda6f00"
 
 # could get this from remote state
