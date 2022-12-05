@@ -12,7 +12,7 @@ Manages a HashiCorp Vault cluster in Azure.
 ## Modules
 | Module Name | Description |
 |---|---|
-| nat_gaetway | Creates a NAT gateway for the Vault subnet |
+| nat_gateway | Creates a NAT gateway for the Vault subnet |
 | netsec | Creates NSG and rules for Vault subnet |
 | userdata | Creates Azure "userdata" for auto config of VMSS instances |
 | vm | Creates VM scale set to host the Vault cluster |
@@ -70,6 +70,7 @@ curl --insecure https://vault.dev.verituityplatform.com
 * Use resource_vesionless_id for akv secrets
 * to limit traffic to vault nodes to be from the load balancer, update api_addr to the IP of the lb in modules/user_data/templates/install_vault.sh.tpl
 * add monitoring
+* Backup vault data https://developer.hashicorp.com/vault/tutorials/standard-procedures/sop-backup#automated-backup-procedures
 * change script in user_data module to a complete cloud-init.conf?
   * download hashicorp vault binary
   * configure vault
