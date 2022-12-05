@@ -61,6 +61,13 @@ curl --insecure https://localhost:8200
 curl --insecure https://vault.dev.verituityplatform.com
 ```
 
+## Backup of Vault raft data
+* Idea:
+    * Use a GRS storage account
+    * VMSS instances will connect via NFS
+    * The VM MSI will have permissions in Vault to read raft data
+    * The "init script" for the VMs will configure a cron job that will perform a raft snapshot and copy the data to the storage container
+
 ## TODO
 * Migrate from gitlab to azure for terraform state
 * Enable "dead server cleanup"
