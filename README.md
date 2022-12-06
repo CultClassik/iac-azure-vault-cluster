@@ -64,7 +64,7 @@ curl --insecure https://vault.dev.verituityplatform.com
 ## Backup of Vault raft data
 * Idea:
     * Use a GRS storage account
-    * VMSS instances will connect via NFS
+    * VMSS instances will have permission to connect via NFS or other means?
     * The VM MSI will have permissions in Vault to read raft data
     * The "init script" for the VMs will configure a cron job that will perform a raft snapshot and copy the data to the storage container
 
