@@ -37,4 +37,3 @@ secrets*
 *.plan
 test
 local_files.tf
-backend*.tf

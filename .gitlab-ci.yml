@@ -8,25 +8,35 @@ variables:
   GITLAB_TOKEN: $TERRAFORM_GITLAB_TOKEN
 
 # -----------------------------------------------------------------------------
-#  PLAN STAGE
+#  Non Prod
 # -----------------------------------------------------------------------------
-plan:
+plan_nonprod:
   extends: .tf_plan
-  parallel:
-    matrix:
-      - TF_VARS_FILE: mgt-nonprod
-        TF_WORKSPACE: $TF_VARS_FILE
-        TF_AZ_BACKEND: $az_backend_management_nonprod
-        TF_VAR_az_sub_id: $ARM_SUBSCRIPTION_ID_CAF_MANAGEMENT
+  allow_failure: true
+  variables:
+    TF_VARS_FILE: mgt-nonprod
+    TF_WORKSPACE: $TF_VARS_FILE
+
+apply_nonprod:
+  extends: .tf_plan
+  needs: [plan_nonprod]
+  variables:
+    TF_VARS_FILE: mgt-nonprod
+    TF_WORKSPACE: $TF_VARS_FILE
 
 # -----------------------------------------------------------------------------
-#  APPLY STAGE
+#  Production
 # -----------------------------------------------------------------------------
-apply:
-  extends: .tf_apply
-  parallel:
-    matrix:
-      - TF_VARS_FILE: mgt-nonprod
-        TF_WORKSPACE: $TF_VARS_FILE
-        TF_AZ_BACKEND: $az_backend_management_nonprod
-        TF_VAR_az_sub_id: $ARM_SUBSCRIPTION_ID_CAF_MANAGEMENT
+plan_production:
+  extends: .tf_plan
+  allow_failure: true
+  variables:
+    TF_VARS_FILE: mgt-production
+    TF_WORKSPACE: $TF_VARS_FILE
+
+apply_production:
+  extends: .tf_plan
+  needs: [plan_production]
+  variables:
+    TF_VARS_FILE: mgt-production
+    TF_WORKSPACE: $TF_VARS_FILE
