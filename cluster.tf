@@ -5,7 +5,7 @@ module "user_data" {
   source                = "./modules/user_data"
   key_vault_key_name    = local.user_supplied_key_vault_key_name
   key_vault_name        = var.key_vault_name #element(split("/", data.azurerm_key_vault.vault.id), length(split("/", data.azurerm_key_vault.vault.id)) - 1)
-  key_vault_secret_id   = data.azurerm_key_vault_secret.akv_secret_id_vault_vm_tls.id
+  key_vault_secret_id   = data.azurerm_key_vault_secret.akv_secret_id_vault_vm_tls.versionless_id
   leader_tls_servername = local.shared_san
   resource_group        = data.azurerm_resource_group.vault
   subscription_id       = data.azurerm_client_config.current.subscription_id
