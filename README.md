@@ -58,7 +58,7 @@ vault operator unseal
 
 
 curl --insecure https://localhost:8200
-curl --insecure https://vault.dev.verituityplatform.com
+curl --insecure https://vault.dev.diehlabsplatform.com
 ```
 
 ## Backup of Vault raft data

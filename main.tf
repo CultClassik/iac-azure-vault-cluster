@@ -20,7 +20,7 @@ locals {
   user_supplied_key_vault_key_name = "hashivault"
   # health_check_path                = "/v1/sys/health?activecode=200&standbycode=200&sealedcode=200&uninitcode=200"
   tags = {
-    repo_name   = "verituity/devops/azure-infrastructure/iac-azure-vault-cluster",
+    repo_name   = "diehlabs/devops/azure-infrastructure/iac-azure-vault-cluster",
     environment = var.environment,
     product     = "vault",
     location    = data.azurerm_resource_group.vault.location

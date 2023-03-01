@@ -1,5 +1,5 @@
 include:
-  - project: 'verituity/devops/cicd-templates'
+  - project: 'diehlabs/devops/cicd-templates'
     file: '/infra/terraform-matrix.yml'
     ref: v0.4-stable
 

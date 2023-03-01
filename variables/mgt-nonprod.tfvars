@@ -1,8 +1,8 @@
-az_sub_id = "a75c42cc-a976-4b30-95c6-aba1c6886cba" # management
+az_sub_id = "" # management
 
 location      = "eastus2"
 environment   = "nonprod"
-dns_zone_name = "nonprod.verituityplatform.com"
+dns_zone_name = "nonprod.diehlabsplatform.com"
 # dns_zone_rg_name = "common"
 
 # lb_autoscale_max_capacity = 3
